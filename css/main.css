@@ -1,0 +1,74 @@
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+li {
+  border-bottom: thin solid #000000;
+  color: #ffffff;
+}
+
+.menu-heading {
+  margin: 5px;
+}
+
+.heading {
+  text-align: center;
+  background-color: #3b5998;
+  color: #ffffff;
+  margin: auto;
+  padding: auto;
+  height: 100%;
+}
+
+.menu {
+  background-color: #3b5998;
+  width: 300px;
+  height: 100vh;
+  display: block;
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  transform: translateX(-100%);
+}
+
+.wrapper {
+  transform: translateX(0);
+  transition: transform 0.5s ease;
+}
+
+.wrapper.visible {
+  transform: translateX(300px);
+  transition: transform 0.5s ease;
+}
+
+.menu-button {
+  float: left;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.selections-title {
+  float: left;
+  margin-right: 5px;
+  color: #ffffff;
+}
+
+.industryName {
+  float: right;
+  color: #ffffff;
+}
+
+.not-visible {
+  display: none;
+}
+
+#map {
+  height: 92vh;
+}
