@@ -15,7 +15,7 @@
         <select class="selections" data-bind="options: dropdownItems, value: dropdownItem"></select>
       </div>
       <ul class='menu-items' data-bind="foreach: filterdMarkers">
-        <li class="menu-item">
+        <li class="menu-item" data-bind="click: $parent.activateLocation">
           <span class="industryName" data-bind="text: industry"></span>
           <span class="companyTitle" data-bind="text: title"></span>
         </li>

@@ -65,15 +65,15 @@ var viewModel = function(model) {
         self.nytAPI(this.title, infoWindow);
       });
     });
-    // Couldn't set a click data-bind to the menu-item because the filterdMarkers function got in the way. Also couldn't find a way to do this without jQuery. Good enough or better solution?
-    $(".menu-item").on("click", function() {
-      // Each list item can be clicked and the corresponding marker infoWindow will display.
-      var companyTitle = $(this).find(".companyTitle").text();
-      self.markersArray().forEach(function(marker) {
-        if (companyTitle == marker.marker.title) {
-          google.maps.event.trigger(marker.marker, 'click');
-        };
-      });
+  };
+
+  self.activateLocation = function(data) {
+    // When a list item is clicked the corresponding marker infoWindow displays.
+    var companyTitle = data.title;
+    self.markersArray().forEach(function(marker) {
+      if (companyTitle == marker.marker.title) {
+        google.maps.event.trigger(marker.marker, 'click');
+      };
     });
   };
 
