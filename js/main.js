@@ -3,18 +3,17 @@ var infoWindow;
 
 function initMap() {
   // Constructor creates a new map.
-  try {
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: {lat: 39.9612, lng: -82.9988},
-      zoom: 11
-    });
-  }
-  catch(err) {
-    alert(err);
-  }
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: {lat: 39.9612, lng: -82.9988},
+    zoom: 11
+  });
 
   ko.applyBindings(new viewModel(model));
 
+}
+
+function mapError() {
+  alert("Google Maps is not loading property");
 }
 
 var model = {
@@ -44,27 +43,7 @@ var viewModel = function(model) {
   self.markersArray  = ko.observableArray(model.markers);
   var wrapper = $(".wrapper");
 
-  self.removeMarkers = function() {
-    self.markersArray().forEach(function(data) {
-      data.marker.setVisible(false)
-    });
-  };
-
-  self.setMarkers = function(dropdownItem) {
-    if (dropdownItem == "All") {
-      self.markersArray().forEach(function(data) {
-        data.marker.setVisible(true);
-      });
-    } else {
-        self.markersArray().forEach(function(data) {
-          if (data.industry == dropdownItem) {
-            data.marker.setVisible(true);
-          };
-        });
-      };
-    };
-
-  self.createMarkers = function() {
+  window.onload = function() {
     self.locations().forEach(function (location) {
       // Creates a new marker for each location industry.
       var marker = new google.maps.Marker({
@@ -78,14 +57,53 @@ var viewModel = function(model) {
       self.markersArray.push({marker: marker ,industry: location.industry});
       infoWindow = new google.maps.InfoWindow();
       marker.addListener("click", function() {
+        map.panTo(marker.position);
         self.markersArray().forEach(function (data) {
           data.marker.setIcon("http://maps.google.com/mapfiles/ms/icons/red-dot.png");
         });
         self.populateInfoWindow(this, infoWindow);
-        self.nytAPI(this.title);
+        self.nytAPI(this.title, infoWindow);
+      });
+    });
+    // Couldn't set a click data-bind to the menu-item because the filterdMarkers function got in the way. Also couldn't find a way to do this without jQuery. Good enough or better solution?
+    $(".menu-item").on("click", function() {
+      // Each list item can be clicked and the corresponding marker infoWindow will display.
+      var companyTitle = $(this).find(".companyTitle").text();
+      self.markersArray().forEach(function(marker) {
+        if (companyTitle == marker.marker.title) {
+          google.maps.event.trigger(marker.marker, 'click');
+        };
       });
     });
   };
+
+  self.removeMarkers = function() {
+    // Removes all markers and infoWindows and resets the marker icon.
+    if (infoWindow) {
+        infoWindow.close();
+    };
+    self.markersArray().forEach(function(data) {
+      data.marker.setVisible(false)
+      data.marker.setIcon("http://maps.google.com/mapfiles/ms/icons/red-dot.png");
+    });
+  };
+
+  self.setMarkers = function(dropdownItem) {
+    // Shows the markers for the industry selected.
+    if (dropdownItem == "All") {
+      self.markersArray().forEach(function(data) {
+        data.marker.animation = google.maps.Animation.DROP;
+        data.marker.setVisible(true);
+      });
+    } else {
+        self.markersArray().forEach(function(data) {
+          if (data.industry == dropdownItem) {
+            data.marker.animation = google.maps.Animation.DROP;
+            data.marker.setVisible(true);
+          };
+        });
+      };
+    };
 
   self.populateInfoWindow = function(marker, infoWindow) {
     marker.setIcon("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png");
@@ -102,8 +120,9 @@ var viewModel = function(model) {
     };
   };
 
-  self.nytAPI = function(q) {
+  self.nytAPI = function(q, infoWindow) {
     // Gets 3 New York Times headlins and links and puts them into the corresponding infoWindow.
+    var content = "<div><h5>" + q + " in the news!</h5></div><ul class='infoWindow'><ul>";
     var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     url += '?' + $.param({
       'q': q,
@@ -118,10 +137,11 @@ var viewModel = function(model) {
           var article = articles[i];
           var nytHeadline = article.headline.main;
           var nytURL = article.web_url;
-          $(".infoWindow").append("<li><a href='" + nytURL + "'>" + nytHeadline + "</a></li>");
+          content += "<li><a href='" + nytURL + "'>" + nytHeadline + "</a></li>";
         };
+        infoWindow.setContent(content);
       }).fail(function() {
-        $(".infoWindow").append("Could not display New York Times articles.");
+        infoWindow.setContent("Could not display New York Times articles.");
         })
   };
 
@@ -131,7 +151,6 @@ var viewModel = function(model) {
   };
 
   self.filterdMarkers = ko.computed(function() {
-    self.createMarkers();
     // Filters the menu options when a dropdown item is selected
     var dropdownItem = self.dropdownItem();
     if (!dropdownItem || dropdownItem == "All") {

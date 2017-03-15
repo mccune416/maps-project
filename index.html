@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="css/main.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='stylesheet' href='bootstrap-3.3.7-dist/css/bootstrap.min.css'/>
+    <link rel='stylesheet' href='bootstrap-3.3.7-dist/css/bootstrap.min.css'>
   </head>
   <body class='wrapper'>
 
-    <section class='menu'>
+    <aside class='menu'>
       <div class="menu-heading">
         <div class="selections-title">Filter by Industry:</div>
         <select class="selections" data-bind="options: dropdownItems, value: dropdownItem"></select>
@@ -20,19 +20,19 @@
           <span class="companyTitle" data-bind="text: title"></span>
         </li>
       </ul>
-    </section>
+    </aside>
 
-    <div class='heading'>
+    <main class='heading'>
       <span data-bind="click: menuToggle" class="glyphicon glyphicon-menu-hamburger menu-button" aria-hidden="true"></span>
       <h3>Major Company Headquarters in Columbus, Ohio</h3>
-    </div>
+    </main>
 
     <div id="map"></div>
 
     <script src="js/jquery-3.1.1.min.js"></script>
-    <script type='text/javascript' src='js/knockout.js'></script>
-    <script type="text/javascript" src='js/main.js'></script>
-    <script async defer
+    <script src='js/knockout.js'></script>
+    <script src='js/main.js'></script>
+    <script async defer onerror="mapError()"
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJDVbUaIWGjH7W9aFQhvbR_xayJ7Hc1HE&v=3&callback=initMap">
     </script>
   </body>
